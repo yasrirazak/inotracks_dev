@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from Buses.models import *
+from django.shortcuts import render
 
 
 @csrf_exempt
@@ -319,3 +320,11 @@ def get_stop_data_from_time(request):
                 content_type = "application/json")
     else:
         raise Http404("NOT ALLOWED")
+
+@csrf_exempt
+def update_status(request):
+    if request.method == 'GET':
+        template = 'update_status.html'
+        return render(request, template, {})
+    if request.method == 'POST':
+        raise Http404("adasd")
