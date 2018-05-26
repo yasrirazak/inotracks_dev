@@ -4,7 +4,11 @@ import json
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from Buses.models import *
+
+from django.shortcuts import render
+
 import pandas as pd
+
 
 
 @csrf_exempt
@@ -322,6 +326,14 @@ def get_stop_data_from_time(request):
         raise Http404("NOT ALLOWED")
 
 @csrf_exempt
+
+def update_status(request):
+    if request.method == 'GET':
+        template = 'update_status.html'
+        return render(request, template, {})
+    if request.method == 'POST':
+        raise Http404("adasd")
+
 def get_json_from_csv(request):
     if request.method == "GET":
         path = request.GET.get('path')
@@ -339,3 +351,4 @@ def get_json_from_csv(request):
         response_data,
         content_type='application/json'
 )
+
