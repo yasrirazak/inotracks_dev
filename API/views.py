@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate
 from Buses.models import *
+import pandas as pd
 
 
 @csrf_exempt
@@ -319,3 +320,22 @@ def get_stop_data_from_time(request):
                 content_type = "application/json")
     else:
         raise Http404("NOT ALLOWED")
+
+@csrf_exempt
+def get_json_from_csv(request):
+    if request.method == "GET":
+        path = request.GET.get('path')
+        response_data = {}
+        try:
+            csv_from_path = pd.read_csv(str(path))
+            json_from_csv = pd.DataFrame.to_json(csv_from_path)
+            response_data = json_from_csv
+        except Exception as e:
+            response_data['status'] = str(e)
+            print(e)
+    else:
+        response_data['status'] = 'Request Invalid'
+    return HttpResponse(
+        response_data,
+        content_type='application/json'
+)
