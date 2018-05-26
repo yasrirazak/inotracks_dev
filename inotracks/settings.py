@@ -78,7 +78,7 @@ AUTH_USER_MODEL = 'users.InoUser'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'db_inotracks',
         'USER': 'ino',
         'PASSWORD': 'inotracks',
