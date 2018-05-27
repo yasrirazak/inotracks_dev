@@ -18,5 +18,5 @@ urlpatterns = [
     url(r'^update_status/', update_status),
 
     url(r'^get_json_from_csv/', get_json_from_csv),
-
+]
 
