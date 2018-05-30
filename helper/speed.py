@@ -20,7 +20,9 @@ def get_speed_in_kmph(lprev, lnew, tprev, tnew):
     diff = tnew - tprev
     diff_in_sec = diff.seconds
     diff_in_hr = diff_in_sec / 3600
-
-    speed_in_kmph = distance_in_km / diff_in_hr
+    try:
+    	speed_in_kmph = distance_in_km / diff_in_hr
+    except:
+        speed_in_kmph=0
 
     return speed_in_kmph
