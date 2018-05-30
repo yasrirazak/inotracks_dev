@@ -10,7 +10,6 @@ from django.shortcuts import render
 import pandas as pd
 
 
-
 @csrf_exempt
 def update_location_and_parameters(request):
     if request.method == "POST":
@@ -257,7 +256,7 @@ def update_stop_location(request):
         post = json.loads(request.body.decode("utf-8"))
         print(post)
         response_data = {}
-        if post.get("key") == "70b66a89929e93416d2ef535893ea14da331da8991cc7c74010b4f3d7fabfd62":
+         post.get("key") == "70b66a89929e93416d2ef535893ea14da331da8991cc7c74010b4f3d7fabfd62":
             bus_number = post['bus_number']
             latitude = post['latitude']
             longitude = post['longitude']
@@ -352,3 +351,78 @@ def get_json_from_csv(request):
         content_type='application/json'
 )
 
+from geopy.distance import geodesic
+@csrf_exempt
+def get_nearest_bus(request):
+ if request.method == "POST":
+  response_data = {}
+  try:
+   post = json.loads(request.body.decode("utf-8"))
+   if post.get("key") == 'bd0e7468203f76439a9d4cb3d29a2403cfe49e41e781813e0cdec392cf054dc9':
+    latitude = post['lat']
+    longitude = post['long']
+    latitude = float(latitude)
+    longitude = float(longitude)
+    user_location=[latitude,longitude]
+    
+    try:
+     get_all_bus = Location.objects.all()
+     list_bus_3km=[]
+     list_bus_5km=[]
+     for location in get_all_bus:
+      bus_location=[location.latitude,location.longitude]   
+      bus_num=location.bus_number
+      bus_parameter=BusParameter.objects.get(bus_number=bus_num)
+      dist=geodesic(user_location, bus_location)
+      dist_km=dist.km
+      
+      count_3km=0
+      count_5km=0
+     
+      if(dist_km<4) :
+       data={
+       'distance_from_req_location':dist_km,
+       'bus_number': bus_num,
+       'speed': bus_parameter.speed,
+       'fuel': bus_parameter.fuel,
+       'battery': bus_parameter.battery,
+       'distance': bus_parameter.distance,
+       'time_recorded': str(bus_parameter.time_recorded)
+        }
+       list_bus_3km.append(data)
+       count_3km += 1
+      if(dist_km<6):
+       if (dist_km>4):
+        data={
+        'distance_from_req_location':dist_km,
+        'bus_number': bus_num,
+        'speed': bus_parameter.speed,
+        'fuel': bus_parameter.fuel,
+        'battery': bus_parameter.battery,
+        'distance': bus_parameter.distance,
+        'time_recorded': str(bus_parameter.time_recorded)
+         }
+        count_5km += 1
+        list_bus_5km.append(data)
+      print list_bus_3km
+      if (count_3km>0)or(count_5km>0):
+       resp={
+       'number_of_near_3km':count_3km,
+       'number_of_near_5km':count_5km,
+       'bus_near_3km':list_bus_3km,
+       'bus_near_5km':list_bus_5km
+        }
+      else:
+       resp={'message':'There is no bus'}
+      response_data["resp"] = resp
+    except Exception as e:
+     response_data["status"] = str(e)
+     print(e)
+   else:
+    response_data['status'] = 'Request Invalid'
+  except Exception as e:
+   response_data['error'] = e
+  return HttpResponse(json.dumps(response_data),content_type = "application/json")
+
+ else:
+  raise Http404("NOT ALLOWED")
