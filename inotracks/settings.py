@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_inotracks',
         'USER': 'root',
-        'PASSWORD': '1715',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
         'charset': 'utf8mb4',
